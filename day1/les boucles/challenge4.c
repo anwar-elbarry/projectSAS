@@ -13,11 +13,6 @@ do{
          printf("%d  ",i);
         counter++;
     }
-
-    else{
-        continue;
-    }
-
 }while(counter<n);
     return 0;
 }

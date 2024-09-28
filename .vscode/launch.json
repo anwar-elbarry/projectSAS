@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": true,
-      "cwd": "c:/Users/safiy/Desktop/projectSAS",
-      "program": "c:/Users/safiy/Desktop/projectSAS/build/Debug/outDebug",
+      "cwd": "c:/Users/safiy/Desktop/projectSAS/les miniprojets/calcule",
+      "program": "c:/Users/safiy/Desktop/projectSAS/les miniprojets/calcule/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [

@@ -3,7 +3,7 @@
 #include <math.h>
 int main()
 {
-int exposant,base,s,i,s;
+int exposant,base,s,i;
 printf("donner la base:");
 scanf("%d",&base);
 printf("donner l'exposant:");
