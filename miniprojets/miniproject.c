@@ -107,7 +107,7 @@ if (nbr_livres < max_string){
                 }
             }
             if (present == 0)
-                printf("le livre %s n'existe pas \n", searcher);
+                printf("le livre [%s] n'existe pas \n", searcher);
             }
             else{
                 printf("le stock est vide\n");
@@ -173,7 +173,7 @@ if (nbr_livres < max_string){
                     }
                 }
                 if (present == 0)
-                    printf("le livre %s n'existe pas \n", searcher);
+                    printf("le livre [%s] n'existe pas \n", searcher);
             }
             else
             {
