@@ -10,7 +10,7 @@
 
 ## score of the quizizz
 
-![App Screenshot](/Screen.png)
+![App Screenshot](/screen.png)
 
 
 ## good tips
