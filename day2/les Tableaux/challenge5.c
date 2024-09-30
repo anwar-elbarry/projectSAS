@@ -3,7 +3,7 @@
 #include <math.h>
 int main()
 {
-int i,n,taille,tempt,min;
+int i,taille,tempt,min;
 //demander la taill du tableau
 printf("donner le nombre d'éléments du tableau :");
 scanf("%d",&taille);
@@ -17,10 +17,11 @@ for(i=1;i<taille;i++){
         if(min>T[i]){
             tempt=T[i];
             T[i]=min;
-            min=tempt;
+min=tempt;  
         }
 
 }
 printf("le minimum de ce tabeau est :%d",min);
     return 0;
 }
+                                    
