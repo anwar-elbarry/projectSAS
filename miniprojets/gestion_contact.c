@@ -1,11 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <regex.h>
 
 #define max_string 100
 #define max_char 30
 #define max_nombres 30
 
+// Structure
 struct contacts {
     char Nom[max_string][max_char];
     char numero[max_string][max_nombres];
@@ -13,14 +15,40 @@ struct contacts {
     int id;
 };
 
+// Variable de struct
 struct contacts contact = {
     .Nom = {"anouar", "yassine", "sammir", "khalid", "rabi3"},
     .numero = {"061246374", "07653891920", "0627364839", "0612343278", "0723438872"},
     .e_mail = {"john.doe@example.com", "sarah.connor@samplemail.com", "wonderland@fictional.com", "bob.builder@homemail.com", "charlie.brown@randommail.com"}
 };
 
+// Variables globales
 int nbr_contact = 4, choix_menu;
 char choix[4], recherch[25];
+
+int validate_email(char e_mail[]) {
+    regex_t regex;
+    int val;
+    val = regcomp(&regex, "^[a-zA-Z0-9]+([._+-][a-zA-Z0-9]+)*@[0-9a-zA-Z]+\\.[a-zA-Z]{2,4}([.][a-zA-Z]{2,3})?$", REG_EXTENDED);
+    if (val) return 0; // Erreur lors de la compilation de l'expression régulière
+    val = regexec(&regex, e_mail, 0, NULL, 0);
+    regfree(&regex);
+    return val == 0; // 0 signifie que l'email est valide
+}
+
+int validate_nombre(char number[]) {
+    regex_t regex1, regex2; // Déclaration de deux regex pour chaque type de numéro
+    int vali1, vali2;
+    vali1 = regcomp(&regex1, "^06[0-9]{8}$", REG_EXTENDED); // Regex pour les numéros commençant par 06
+    vali2 = regcomp(&regex2, "^07[0-9]{8}$", REG_EXTENDED); // Regex pour les numéros commençant par 07
+    if (vali1 || vali2) return 0; // Vérifie si la compilation a échoué pour l'une des regex
+
+    vali1 = regexec(&regex1, number, 0, NULL, 0); // Exécute la regex pour 06
+    vali2 = regexec(&regex2, number, 0, NULL, 0); // Exécute la regex pour 07
+    regfree(&regex1); // Libère la mémoire de la première regex
+    regfree(&regex2); // Libère la mémoire de la deuxième regex
+    return (vali1 == 0 || vali2 == 0); // Renvoie vrai si l'une des regex est valide
+}
 
 void menu() {
     printf("\n******************** MENU Contacts ****************\n");
@@ -39,18 +67,37 @@ void menu() {
 void ajouter() {
     do {
         getchar();
+        
+        if (nbr_contact >= max_string) { // Vérification pour éviter le dépassement de tableau
+            printf("Limite de contacts atteinte.\n");
+            break;
+        }
+
         printf("Nom: ");
         fgets(contact.Nom[nbr_contact], max_char, stdin);
         contact.Nom[nbr_contact][strcspn(contact.Nom[nbr_contact], "\n")] = 0; // remove newline
 
-        printf("Numero: ");
-        fgets(contact.numero[nbr_contact], max_nombres, stdin);
-        contact.numero[nbr_contact][strcspn(contact.numero[nbr_contact], "\n")] = 0; // remove newline
-
-        printf("E-mail: ");
-        fgets(contact.e_mail[nbr_contact], max_char, stdin);
-        contact.e_mail[nbr_contact][strcspn(contact.e_mail[nbr_contact], "\n")] = 0; // remove newline
-
+        while(1){
+            printf("Numero: ");
+            fgets(contact.numero[nbr_contact], max_nombres, stdin);
+            contact.numero[nbr_contact][strcspn(contact.numero[nbr_contact], "\n")] = 0; // remove newline
+            
+            if(validate_nombre(contact.numero[nbr_contact]))
+                break;
+            else
+                printf("Format de numero invalide\n");
+        }
+        
+        while(1){
+            printf("E-mail: ");
+            fgets(contact.e_mail[nbr_contact], max_char, stdin);
+            contact.e_mail[nbr_contact][strcspn(contact.e_mail[nbr_contact], "\n")] = 0; // remove newline
+            if(validate_email(contact.e_mail[nbr_contact]))
+                break;
+            else
+                printf("Format d'email invalide\n");
+        }
+        
         nbr_contact++;
 
         printf("Ajouter un nouveau contact (oui ou non): ");
@@ -84,13 +131,33 @@ void modifier() {
 }
 
 void afficher() {
+    char tempnam[max_char];
+    for(int i = 0; i < nbr_contact - 1; i++) {
+        for(int j = i + 1; j < nbr_contact; j++) {
+            if(strncmp(contact.Nom[i], contact.Nom[j], 1) > 0) {
+                strcpy(tempnam, contact.Nom[i]);
+                strcpy(contact.Nom[i], contact.Nom[j]);
+                strcpy(contact.Nom[j], tempnam);
+
+                strcpy(tempnam, contact.numero[i]);
+                strcpy(contact.numero[i], contact.numero[j]);
+                strcpy(contact.numero[j], tempnam);
+
+                strcpy(tempnam, contact.e_mail[i]);
+                strcpy(contact.e_mail[i], contact.e_mail[j]);
+                strcpy(contact.e_mail[j], tempnam);
+            }
+        }
+    }
     for (int i = 0; i < nbr_contact; i++) {
-        printf("\n*************** Contact N%d ***********\n", i + 1);
-        printf("         Nom: %s\n", contact.Nom[i]);
-        printf("         Numero: %s\n", contact.numero[i]);
-        printf("         E-mail: %s\n", contact.e_mail[i]);
-        printf("         id: %d\n",i+1);
-        printf("\n***************************************\n");
+        if (strlen(contact.Nom[i]) > 0) { // Vérification pour éviter d'afficher des contacts vides
+            printf("\n*************** Contact N%d ***********\n", i + 1);
+            printf("         Nom: %s\n", contact.Nom[i]);
+            printf("         Numero: %s\n", contact.numero[i]);
+            printf("         E-mail: %s\n", contact.e_mail[i]);
+            printf("         id: %d\n", i + 1);
+            printf("\n***************************************\n");
+        }
     }
 }
 
@@ -127,25 +194,28 @@ void rechercher() {
             printf("         Nom: %s\n", contact.Nom[i]);
             printf("         Numero: %s\n", contact.numero[i]);
             printf("         E-mail: %s\n", contact.e_mail[i]);
-            printf("         id: %d\n",i+1);
+            printf("         id: %d\n", i + 1);
             printf("\n***************************************\n");
             return;
         }
     }
     printf("[%s] n'existe pas dans les contacts.\n", recherch);
 }
-void counte(){
- int count07=0,count06=0;
-                    for (int i = 0; i < nbr_contact; i++) {
+
+void counte() {
+    int count07 = 0, count06 = 0;
+    for (int i = 0; i < nbr_contact; i++) {
         if (strncmp(contact.numero[i], "07", 2) == 0) {
             count07++;
         } else if (strncmp(contact.numero[i], "06", 2) == 0) {
             count06++;
         }
     }
-             printf("Nombre de numeros commencant par '07' est:%d\n",count07);
-             printf("Nombre de numeros commencant par '06' est:%d\n",count06);
+    printf("Nombre de numeros commencant par '07' est: %d\n", count07);
+    printf("Nombre de numeros commencant par '06' est: %d\n", count06);
 }
+
+//_______________________main________________________________________________________
 int main() {
     do {
         menu();
@@ -181,3 +251,4 @@ int main() {
 
     return 0;
 }
+
