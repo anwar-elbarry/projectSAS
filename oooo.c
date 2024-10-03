@@ -1,0 +1,484 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+
+
+#define max_string 100
+#define max_char 30
+#define max_date 30
+
+
+typedef struct Clients{
+
+    char Nom[max_string][max_char];
+    char prenom[max_string][max_char];
+    char telephon[max_string][max_char];
+    char statut[max_string][max_char];
+    int age[max_string];
+    int refer[max_string];
+    char date[max_string][max_date];
+
+};
+struct Clients client = {
+
+     .prenom = {"anouar","yassine","samir","khalid","omar","salma","rachida","wissal","farida","nabil"},
+     .Nom = {"elbarry","sliko","chnaoui","bohakem","bouchta","lamin","senhaji","dodan","yaacoubi","nssiri"},
+     .telephon = {"061246374","0687653945","06175842","06193476","06120583","06148759","07136528","07184260","07197014","07125439"},
+     .statut = {"valide","reporte","annule","traite","reporte","annule","reporte","traite","annule","valide"},
+     .age = {18,22,29,30,35,45,32,19,21,38},
+     .refer = {1,2,3,4,5,6,7,8,9,10},
+     .date = {"3/2/2024","7/5/2024","12/2/2024","4/6/2024","15/8/2024","24/5/2024","21/3/2024","2/4/2024","25/7/2024","5/5/2024"},
+
+};
+int nbr_clients=10,valide=2,reporte=2,annule=2,traite=2;
+int unique_reference = 11;
+
+
+void menu(){
+ printf("\n******************** MENU reservation ***************\n");
+    printf("*                                                  *\n");
+    printf("*     1 - Ajouter une reservation.                 *\n");
+    printf("*     2 - Modifier une reservation.                *\n");
+    printf("*     3 - Supprimer une reservation.               *\n");
+    printf("*     4 - Afficher les details d'une reservation.  *\n");
+    printf("*     5 - Rechercher une reservations.             *\n");
+    printf("*     6 - Triage.                                  *\n");
+    printf("*     7 - Statistiques.                            *\n");
+    printf("*     8 - Quitter.                                 *\n");
+    printf("*                                                  *\n");
+    printf("****************************************************\n");
+};
+void ajouter(){
+    char nv_client[5];
+
+    do {
+
+     printf("Nom:");
+     fgets(client.Nom[nbr_clients], max_char, stdin);
+     client.Nom[nbr_clients][strcspn(client.Nom[nbr_clients], "\n")] = 0;
+
+     printf("Prenom:");
+     fgets(client.prenom[nbr_clients], max_char, stdin);
+     client.prenom[nbr_clients][strcspn(client.prenom[nbr_clients], "\n")] = 0;
+     do {
+     printf("Telephone:");
+     fgets(client.telephon[nbr_clients], max_char, stdin);
+     client.telephon[nbr_clients][strcspn(client.telephon[nbr_clients], "\n")] = 0;
+     }while(validation_tele(client.telephon[nbr_clients])==0);
+
+     printf("Age:");
+     scanf("%d",&client.age[nbr_clients]);
+
+     getchar();
+     do{
+     printf("Statut(valide, reporte, annule, traite):");
+     fgets(client.statut[nbr_clients], max_char, stdin);
+     client.statut[nbr_clients][strcspn(client.statut[nbr_clients], "\n")] = 0;
+     if((strcmp(client.statut[nbr_clients],"valide")==0))
+          valide++;
+          else if((strcmp(client.statut[nbr_clients],"reporte")==0))
+          reporte++;
+          else if((strcmp(client.statut[nbr_clients],"annule")==0))
+          annule++;
+          else if((strcmp(client.statut[nbr_clients],"traite")==0))
+          traite++;
+
+     }while((strcmp(client.statut[nbr_clients],"valide")!= 0)&&
+           (strcmp(client.statut[nbr_clients],"reporte")!= 0) &&
+           (strcmp(client.statut[nbr_clients],"annule")!= 0) &&
+           (strcmp(client.statut[nbr_clients],"traite")!= 0));
+     do{
+     printf("Date de reservation :");
+     fgets(client.date[nbr_clients], max_char, stdin);
+     client.date[nbr_clients][strcspn(client.date[nbr_clients], "\n")] = 0;
+
+     client.refer[nbr_clients]=unique_reference;
+
+      }while(validation_date(client.date[nbr_clients])==0);
+
+     unique_reference++;
+     nbr_clients++;
+
+     do{
+     printf("voulez-vous ajouter une nouvelle reservation (oui/non):");
+     fgets(nv_client, 5, stdin);
+     nv_client[strcspn(nv_client, "\n")] = 0;
+
+     }while(strcmp(nv_client,"non") != 0 && strcmp(nv_client,"oui") !=0 );
+
+
+    }while(strcmp(nv_client,"oui") == 0);
+};
+
+void modifier(){
+     int recherch;
+     int present=0;
+
+     printf("donner le referece unique du client:");
+     scanf("%d",&recherch);
+
+     getchar();
+     for(int i=0;i<nbr_clients;i++ ){
+
+           if(recherch==client.refer[i]){
+
+                if((strcmp(client.statut[i],"valide")==0))
+                   valide--;
+                else if((strcmp(client.statut[i],"reporte")==0))
+                   reporte--;
+                else if((strcmp(client.statut[i],"annule")==0))
+                   annule--;
+                else if((strcmp(client.statut[i],"traite")==0))
+                   traite--;
+
+     printf("Nom:");
+     fgets(client.Nom[i], max_char, stdin);
+     client.Nom[i][strcspn(client.Nom[i], "\n")] = 0;
+
+     printf("Prenom:");
+     fgets(client.prenom[i], max_char, stdin);
+     client.prenom[i][strcspn(client.prenom[i], "\n")] = 0;
+
+     printf("Telephone:");
+     fgets(client.telephon[i], max_char, stdin);
+     client.telephon[i][strcspn(client.telephon[i], "\n")] = 0;
+
+     printf("Age:");
+     scanf("%d",&client.age[i]);
+
+     getchar();
+     do{
+     printf("Statut(valide, reporte, annule, traite):");
+     fgets(client.statut[i], max_char, stdin);
+     client.statut[i][strcspn(client.statut[i], "\n")] = 0;
+
+     if((strcmp(client.statut[i],"valide")==0))
+          valide++;
+          else if((strcmp(client.statut[i],"reporte")==0))
+          reporte++;
+          else if((strcmp(client.statut[i],"annule")==0))
+          annule++;
+          else if((strcmp(client.statut[i],"traite")==0))
+          traite++;
+
+     }while((strcmp(client.statut[i],"valide")!= 0)&&
+           (strcmp(client.statut[i],"reporte")!= 0) &&
+           (strcmp(client.statut[i],"annule")!= 0) &&
+           (strcmp(client.statut[i],"traite")!= 0));
+
+     printf("la Date:");
+     fgets(client.date[i], max_char, stdin);
+     client.date[i][strcspn(client.date[i], "\n")] = 0;
+
+     printf("Votre modification a reussi.");
+     present++;
+     break;
+           }
+     }
+       if(present==0)
+        printf("le reference %d n'existe pas.\n",recherch);
+};
+void supprimer(){
+
+     int recherch;
+     int present=0;
+     printf("donner le referece unique du client:");
+     scanf("%d",&recherch);
+
+     for(int i=0;i<nbr_clients;i++ ){
+           if(recherch==client.refer[i]){
+            for(int j=i;j<nbr_clients-1;j++){
+                strcpy(client.Nom[j], client.Nom[j + 1]);
+                strcpy(client.prenom[j], client.prenom[j + 1]);
+                strcpy(client.telephon[j], client.telephon[j + 1]);
+                client.age[j] = client.age[j + 1];
+                strcpy(client.statut[j], client.statut[j + 1]);
+                strcpy(client.date[j], client.date[j + 1]);
+                client.refer[j] = client.refer[j + 1];
+            }
+            printf("supprition avec succes.");
+            present++;
+            nbr_clients--;
+            break;
+           }
+     }
+        if(present==0)
+        printf("le reference %d n'existe pas.\n",recherch);
+}
+void afficher(){
+    for(int i=0;i<nbr_clients;i++){
+        printf("\n________________client N%d________________\n",i+1);
+        printf("-Nom:%s\n",client.Nom[i]);
+        printf("-prenom:%s\n",client.prenom[i]);
+        printf("-telephon:%s\n",client.telephon[i]);
+        printf("-age:%d \n",client.age[i]);
+        printf("-statut:%s\n",client.statut[i]);
+        printf("-reference:%d\n",client.refer[i]);
+        printf("-La Date:%s\n",client.date[i]);
+
+    }
+
+};
+
+void tri(){
+    int choix;
+    printf("\n----------choix de tri--------\n");
+    printf("   1-Tri par Nom.\n");
+    printf("   2-Tri par statut.\n");
+    do{
+    printf("choiser un nombre (1/2):");
+    scanf("%d",&choix);
+    }while((choix != 1) && (choix !=2));
+    switch(choix){
+case 1:
+    for(int i=0;i<nbr_clients-1;i++){
+        for(int j=0;j<nbr_clients-i-1;j++){
+             if (strcmp(client.Nom[j], client.Nom[j + 1]) > 0) {
+                        //  Nom
+                        char temp[max_char];
+                        strcpy(temp, client.Nom[j]);
+                        strcpy(client.Nom[j], client.Nom[j + 1]);
+                        strcpy(client.Nom[j + 1], temp);
+
+                        //  Prénom
+                        strcpy(temp, client.prenom[j]);
+                        strcpy(client.prenom[j], client.prenom[j + 1]);
+                        strcpy(client.prenom[j + 1], temp);
+
+                        //  Téléphone
+                        strcpy(temp, client.telephon[j]);
+                        strcpy(client.telephon[j], client.telephon[j + 1]);
+                        strcpy(client.telephon[j + 1], temp);
+
+                        //  Age
+                        int age_temp = client.age[j];
+                        client.age[j] = client.age[j + 1];
+                        client.age[j + 1] = age_temp;
+
+                        //  Statut
+                        strcpy(temp, client.statut[j]);
+                        strcpy(client.statut[j], client.statut[j + 1]);
+                        strcpy(client.statut[j + 1], temp);
+
+                        //  Date
+                        strcpy(temp, client.date[j]);
+                        strcpy(client.date[j], client.date[j + 1]);
+                        strcpy(client.date[j + 1], temp);
+
+                        //  Reference
+                        int ref_temp = client.refer[j];
+                        client.refer[j] = client.refer[j + 1];
+                        client.refer[j + 1] = ref_temp;
+                    }
+        }
+    }
+     printf("Tri par Nom effectue avec succes.\n");
+     afficher();
+     break;
+case 2:
+    for(int i=0;i<nbr_clients;i++){
+        if(strcmp("valide",client.statut[i])==0){
+        printf("\n________________valide________________\n");
+        printf("-Nom:%s\n",client.Nom[i]);
+        printf("-prenom:%s\n",client.prenom[i]);
+        printf("-telephon:%s\n",client.telephon[i]);
+        printf("-age:%d \n",client.age[i]);
+        printf("-statut:%s\n",client.statut[i]);
+        printf("-reference:%d\n",client.refer[i]);
+        printf("-La Date:%s\n",client.date[i]);
+        }
+    }
+        for(int i=0;i<nbr_clients;i++){
+        if(strcmp("reporte",client.statut[i])==0){
+        printf("\n________________reporte________________\n");
+        printf("-Nom:%s\n",client.Nom[i]);
+        printf("-prenom:%s\n",client.prenom[i]);
+        printf("-telephon:%s\n",client.telephon[i]);
+        printf("-age:%d \n",client.age[i]);
+        printf("-statut:%s\n",client.statut[i]);
+        printf("-reference:%d\n",client.refer[i]);
+        printf("-La Date:%s\n",client.date[i]);
+        }
+    }
+        for(int i=0;i<nbr_clients;i++){
+        if(strcmp("annule",client.statut[i])==0){
+        printf("\n________________annule________________\n");
+        printf("-Nom:%s\n",client.Nom[i]);
+        printf("-prenom:%s\n",client.prenom[i]);
+        printf("-telephon:%s\n",client.telephon[i]);
+        printf("-age:%d \n",client.age[i]);
+        printf("-statut:%s\n",client.statut[i]);
+        printf("-reference:%d\n",client.refer[i]);
+        printf("-La Date:%s\n",client.date[i]);
+        }
+    }
+        for(int i=0;i<nbr_clients;i++){
+        if(strcmp("traite",client.statut[i])==0){
+        printf("\n________________traite________________\n");
+        printf("-Nom:%s\n",client.Nom[i]);
+        printf("-prenom:%s\n",client.prenom[i]);
+        printf("-telephon:%s\n",client.telephon[i]);
+        printf("-age:%d \n",client.age[i]);
+        printf("-statut:%s\n",client.statut[i]);
+        printf("-reference:%d\n",client.refer[i]);
+        printf("-La Date:%s\n",client.date[i]);
+        }
+    }
+
+
+    }
+};
+
+void rechercher(){
+        int choix;
+        int recherch;
+        int present=0;
+        char nom[max_char];
+    printf("\n----------choix de tri--------\n");
+    printf("   1-recherche par reference unique.\n");
+    printf("   2-recherche par nom.\n");
+    do{
+    printf("choiser un nombre (1/2):");
+    scanf("%d",&choix);
+    getchar();
+    }while((choix != 1) && (choix !=2));
+    switch(choix){
+case 1:
+
+     printf("donner le referece unique du client:");
+     scanf("%d",&recherch);
+     getchar();
+     for(int i=0;i<nbr_clients;i++ ){
+           if(recherch==client.refer[i]){
+
+          printf("-Nom:%s\n",client.Nom[i]);
+        printf("-prenom:%s\n",client.prenom[i]);
+        printf("-telephon:%s\n",client.telephon[i]);
+        printf("-age:%d \n",client.age[i]);
+        printf("-statut:%s\n",client.statut[i]);
+        printf("-reference:%d\n",client.refer[i]);
+        printf("-La Date:%s\n",client.date[i]);
+            present++;
+            nbr_clients--;
+            break;
+           }
+     }
+        if(present==0)
+        printf("le reference %d n'existe pas.\n",recherch);
+        break;
+case 2:
+    printf("\n donner le Nom:");
+    scanf("%[^\n]%*c",&nom);
+    for(int i=0;i<nbr_clients;i++){
+        if(strcmp(nom,client.Nom[i])==0){
+        printf("____________________________\n");
+        printf("\n-Nom:%s\n",client.Nom[i]);
+        printf("-prenom:%s\n",client.prenom[i]);
+        printf("-telephon:%s\n",client.telephon[i]);
+        printf("-age:%d \n",client.age[i]);
+        printf("-statut:%s\n",client.statut[i]);
+        printf("-reference:%d\n",client.refer[i]);
+        printf("-La Date:%s\n",client.date[i]);
+        printf("____________________________\n");
+
+        present++;
+        break;
+        }
+    }
+    if(present==0)
+        printf("pas de client a ce nome");
+    break;
+    }
+};
+void statistique(){
+    int s=0;
+    int moyenne;
+    int adult=0,enfant=0,grand=0;
+    for(int i=0;i<nbr_clients;i++){
+        s+=client.age[i];
+    }
+    moyenne=s/nbr_clients;
+
+    for(int i=0;i<nbr_clients;i++){
+        if(client.age[i]<=18)
+            enfant++;
+        else if(client.age[i]>18 && client.age[i]<=35)
+            adult++;
+        else
+            grand++;
+    }
+    printf("la moyenne d'age:%d\n",moyenne);
+    printf("____________________\n");
+    printf("0-18 ans :%d\n",enfant);
+    printf("19-35 ans:%d\n",adult);
+    printf("36+ ans  :%d\n",grand);
+    printf("____________________\n");
+    printf("valide:%d\n",valide);
+    printf("reporte:%d\n",reporte);
+    printf("annule:%d\n",annule);
+    printf("traite:%d\n",traite);
+
+}
+
+int validation_tele(char nombre[]){
+
+     if(strlen(nombre)!=10){
+        return 0;
+     }
+     if(!((nombre[0] == '0' && nombre[1] == '6') ||
+          (nombre[0] == '0' && nombre[1] == '7'))){
+            return 0;
+     }
+
+     for(int i=0;i<10;i++){
+        if(!isdigit(nombre[i]))
+            return 0;
+     }
+     return 1;
+}
+int validation_date(char date[]){
+     if(date[2]!= '/' || date[5]!= '/' || date[10] != '\0'){
+            return 0;
+        }
+        return 1;
+}
+int main() {
+    int choix_menu;
+ do {
+        menu();
+        printf("Choisir un nombre entre (1 et 8): ");
+        scanf("%d", &choix_menu);
+        getchar();
+        switch (choix_menu) {
+            case 1:
+                ajouter();
+                break;
+            case 2:
+                modifier();
+                break;
+            case 3:
+                supprimer();
+                break;
+            case 4:
+                afficher();
+                break;
+            case 5:
+                tri();
+                break;
+            case 6:
+                rechercher();
+                break;
+            case 7:
+                statistique();
+                break;
+            case 8:
+                printf("Au revoir !\n");
+                break;
+            default:
+                printf("Choix invalide. Veuillez reessayer.\n");
+                break;
+        }
+    } while (choix_menu > 0 && choix_menu <= 7);
+    return 0;
+}
