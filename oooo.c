@@ -31,12 +31,12 @@ struct Clients client = {
      .date = {"3/2/2024","7/5/2024","12/2/2024","4/6/2024","15/8/2024","24/5/2024","21/3/2024","2/4/2024","25/7/2024","5/5/2024"},
 
 };
-int nbr_clients=10,valide=2,reporte=2,annule=2,traite=2;
+int nbr_clients=10,valide=2,reporte=3,annule=3,traite=2;
 int unique_reference = 11;
 
 
 void menu(){
- printf("\n******************** MENU reservation ***************\n");
+ printf("\n******************** MENU reservation **************\n");
     printf("*                                                  *\n");
     printf("*     1 - Ajouter une reservation.                 *\n");
     printf("*     2 - Modifier une reservation.                *\n");
@@ -50,7 +50,7 @@ void menu(){
     printf("****************************************************\n");
 };
 void ajouter(){
-    char nv_client[5];
+    char nv_client[max_char];
 
     do {
 
@@ -66,11 +66,11 @@ void ajouter(){
      fgets(client.telephon[nbr_clients], max_char, stdin);
      client.telephon[nbr_clients][strcspn(client.telephon[nbr_clients], "\n")] = 0;
      }while(validation_tele(client.telephon[nbr_clients])==0);
-
+     do{
      printf("Age:");
      scanf("%d",&client.age[nbr_clients]);
-
      getchar();
+     }while(validation_age(client.age[nbr_clients])== 0);
      do{
      printf("Statut(valide, reporte, annule, traite):");
      fgets(client.statut[nbr_clients], max_char, stdin);
@@ -89,20 +89,18 @@ void ajouter(){
            (strcmp(client.statut[nbr_clients],"annule")!= 0) &&
            (strcmp(client.statut[nbr_clients],"traite")!= 0));
      do{
-     printf("Date de reservation :");
+     printf("Date de reservation (JJ/MM/AAAA):");
      fgets(client.date[nbr_clients], max_char, stdin);
      client.date[nbr_clients][strcspn(client.date[nbr_clients], "\n")] = 0;
 
      client.refer[nbr_clients]=unique_reference;
-
       }while(validation_date(client.date[nbr_clients])==0);
 
      unique_reference++;
      nbr_clients++;
-
      do{
      printf("voulez-vous ajouter une nouvelle reservation (oui/non):");
-     fgets(nv_client, 5, stdin);
+     fgets(nv_client, max_char, stdin);
      nv_client[strcspn(nv_client, "\n")] = 0;
 
      }while(strcmp(nv_client,"non") != 0 && strcmp(nv_client,"oui") !=0 );
@@ -188,6 +186,14 @@ void supprimer(){
 
      for(int i=0;i<nbr_clients;i++ ){
            if(recherch==client.refer[i]){
+                if((strcmp(client.statut[i],"valide")==0))
+                   valide--;
+                else if((strcmp(client.statut[i],"reporte")==0))
+                   reporte--;
+                else if((strcmp(client.statut[i],"annule")==0))
+                   annule--;
+                else if((strcmp(client.statut[i],"traite")==0))
+                   traite--;
             for(int j=i;j<nbr_clients-1;j++){
                 strcpy(client.Nom[j], client.Nom[j + 1]);
                 strcpy(client.prenom[j], client.prenom[j + 1]);
@@ -197,8 +203,10 @@ void supprimer(){
                 strcpy(client.date[j], client.date[j + 1]);
                 client.refer[j] = client.refer[j + 1];
             }
+
+
             printf("supprition avec succes.");
-            present++;
+            present=1;
             nbr_clients--;
             break;
            }
@@ -229,6 +237,7 @@ void tri(){
     do{
     printf("choiser un nombre (1/2):");
     scanf("%d",&choix);
+    getchar();
     }while((choix != 1) && (choix !=2));
     switch(choix){
 case 1:
@@ -359,8 +368,8 @@ case 1:
         printf("-statut:%s\n",client.statut[i]);
         printf("-reference:%d\n",client.refer[i]);
         printf("-La Date:%s\n",client.date[i]);
+
             present++;
-            nbr_clients--;
             break;
            }
      }
@@ -442,6 +451,12 @@ int validation_date(char date[]){
             return 0;
         }
         return 1;
+}
+int validation_age(int age[]){
+     if(age < 1 || age > 100){
+        return 0;
+     }
+     return 1;
 }
 int main() {
     int choix_menu;
