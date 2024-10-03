@@ -30,7 +30,7 @@ int validate_email(char e_mail[]) {
     regex_t regex;
     int val;
     val = regcomp(&regex, "^[a-zA-Z0-9]+([._+-][a-zA-Z0-9]+)*@[0-9a-zA-Z]+\\.[a-zA-Z]{2,4}([.][a-zA-Z]{2,3})?$", REG_EXTENDED);
-    if (val) return 0; // Erreur lors de la compilation de l'expression régulière
+    if (val) return 0; 
     val = regexec(&regex, e_mail, 0, NULL, 0);
     regfree(&regex);
     return val == 0; // 0 signifie que l'email est valide
@@ -39,15 +39,15 @@ int validate_email(char e_mail[]) {
 int validate_nombre(char number[]) {
     regex_t regex1, regex2; // Déclaration de deux regex pour chaque type de numéro
     int vali1, vali2;
-    vali1 = regcomp(&regex1, "^06[0-9]{8}$", REG_EXTENDED); // Regex pour les numéros commençant par 06
-    vali2 = regcomp(&regex2, "^07[0-9]{8}$", REG_EXTENDED); // Regex pour les numéros commençant par 07
-    if (vali1 || vali2) return 0; // Vérifie si la compilation a échoué pour l'une des regex
+    vali1 = regcomp(&regex1, "^06[0-9]{8}$", REG_EXTENDED); 
+    vali2 = regcomp(&regex2, "^07[0-9]{8}$", REG_EXTENDED); 
+    if (vali1 || vali2) return 0; // Vérifie 
 
-    vali1 = regexec(&regex1, number, 0, NULL, 0); // Exécute la regex pour 06
-    vali2 = regexec(&regex2, number, 0, NULL, 0); // Exécute la regex pour 07
-    regfree(&regex1); // Libère la mémoire de la première regex
-    regfree(&regex2); // Libère la mémoire de la deuxième regex
-    return (vali1 == 0 || vali2 == 0); // Renvoie vrai si l'une des regex est valide
+    vali1 = regexec(&regex1, number, 0, NULL, 0);
+    vali2 = regexec(&regex2, number, 0, NULL, 0); 
+    regfree(&regex1); 
+    regfree(&regex2); 
+    return (vali1 == 0 || vali2 == 0);
 }
 
 void menu() {
