@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-
+#include <ctype.h>
 
 #define max_string 100
 #define max_char 30
